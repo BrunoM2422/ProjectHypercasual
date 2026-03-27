@@ -6,14 +6,12 @@ public class ItemCollectableBase : MonoBehaviour
 {
     public string compareTag = "Player";
     public ParticleSystem particlePrefab;
-
     public AudioSource audioSource;
 
-    public MeshRenderer meshRenderer;
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.transform.CompareTag(compareTag))
+        if (collision.transform.CompareTag(compareTag) || collision.transform.CompareTag("Aura"))
         {
             Collect();
         }
@@ -23,23 +21,15 @@ public class ItemCollectableBase : MonoBehaviour
         OnCollect();
         if (audioSource != null && audioSource.clip != null)
         {
-            audioSource.Play();
-            meshRenderer.enabled = false;
-            Destroy(gameObject, audioSource.clip.length);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
+        }
+        gameObject.SetActive(false);
     }
 
     protected virtual void OnCollect()
     {
-        if (audioSource != null && audioSource.clip != null)
-        {
-            audioSource.Play();
-        }
+
         if (particlePrefab != null)
         {
             ParticleSystem ps = Instantiate(particlePrefab, transform.position, Quaternion.identity);
