@@ -16,6 +16,7 @@ public class PlayerScript : Singleton<PlayerScript>
     private float flyTargetHeight;
     public float flyHeight = 3f;
     public float flyForce = 5f;
+    public Animator animator;
 
 
     private float horizontalInput;
@@ -57,6 +58,8 @@ public class PlayerScript : Singleton<PlayerScript>
     void Update()
     {
         if (!_canRun) return;
+
+        animator.SetFloat("Speed", rb.linearVelocity.magnitude);
 
         for (int i = activePowerUps.Count - 1; i >= 0; i--)
         {
@@ -115,7 +118,8 @@ public class PlayerScript : Singleton<PlayerScript>
         if(collision.gameObject.CompareTag("FinishLine"))
         {
             winPanel.SetActive(true);
-            _canRun = false;
+            animator.SetTrigger("Win");
+            StopPlayer();
         }
         if (collision.gameObject.CompareTag("Obstacle"))
         {
@@ -124,7 +128,8 @@ public class PlayerScript : Singleton<PlayerScript>
                 return;
             }
             gameOverPanel.SetActive(true);
-            _canRun = false;
+            animator.SetTrigger("IsDead");
+            StopPlayer();
 
         }
     }
@@ -247,6 +252,23 @@ public class PlayerScript : Singleton<PlayerScript>
     void DisableGather()
     {
         gatherMagnet.SetActive(false);
+    }
+
+    void StopPlayer()
+    {
+        _canRun = false;
+
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+
+        horizontalInput = 0f;
+
+
+        animator.SetFloat("Speed", 0f);
+
+
     }
 
 }
