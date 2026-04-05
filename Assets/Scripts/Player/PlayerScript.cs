@@ -23,6 +23,7 @@ public class PlayerScript : Singleton<PlayerScript>
     public TextMeshProUGUI countdownText;
     public GameObject gatherMagnet;
     public GameObject player;
+    public ParticleSystem deathParticle;
 
 
 
@@ -139,6 +140,7 @@ public class PlayerScript : Singleton<PlayerScript>
             }
             gameOverPanel.SetActive(true);
             animator.SetTrigger("IsDead");
+            deathParticle.Play();
             StopPlayer();
 
         }
