@@ -87,7 +87,8 @@ MonoBehaviour:
   compareTag: Player
   particlePrefab: {fileID: 0}
   audioSource: {fileID: 1068030620126366150}
-  duration: 2
+  player: {fileID: 0}
+  duration: 0.4
 --- !u!1 &8392317176187140280
 GameObject:
   m_ObjectHideFlags: 0

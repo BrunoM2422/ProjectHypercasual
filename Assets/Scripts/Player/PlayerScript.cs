@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerScript : Singleton<PlayerScript>
 {
@@ -17,19 +18,23 @@ public class PlayerScript : Singleton<PlayerScript>
     public float flyHeight = 3f;
     public float flyForce = 5f;
     public Animator animator;
+    public GameObject shield;
+    public GameObject timerUI;
+    public TextMeshProUGUI countdownText;
+    public GameObject gatherMagnet;
+    public GameObject player;
+    public float boostedScale = 1.2f;
 
 
+    private Vector3 originalScale;
+    private bool isScaled = false;
     private float horizontalInput;
     private bool _canRun;
     private float _currentSpeed;
     private bool _isInvincible;
+    private bool isFlying = false;
 
-    public GameObject shield;
 
-    public GameObject timerUI;
-    public TextMeshProUGUI countdownText;
-
-    public GameObject gatherMagnet;
 
     public enum PowerUpType
     {
@@ -50,6 +55,11 @@ public class PlayerScript : Singleton<PlayerScript>
 
     void Start()
     {
+        
+        transform.localScale = Vector3.zero; 
+        transform.DOScale(Vector3.one, 1f);
+        originalScale = Vector3.one;
+
         _canRun = false;
         ResetSpeed();
         StartCoroutine(StartCountdown());
@@ -69,6 +79,8 @@ public class PlayerScript : Singleton<PlayerScript>
             {
                 EndPowerUp(activePowerUps[i].type);
                 activePowerUps.RemoveAt(i);
+
+                UpdateScale();
             }
         }
 
@@ -153,8 +165,10 @@ public class PlayerScript : Singleton<PlayerScript>
             activePowerUps.Add(new ActivePowerUp { type = type, timer = duration });
             StartPowerUp(type, value);
         }
+        UpdateScale();
     }
 
+    #region PowerUp Logic
     private void StartPowerUp(PowerUpType type, float value)
     {
         switch (type)
@@ -198,9 +212,11 @@ public class PlayerScript : Singleton<PlayerScript>
                 break;
         }
     }
+    #endregion
 
-    private bool isFlying = false;
 
+
+    #region PowerUp Methods
     void EnableFly()
     {
         isFlying = true;
@@ -224,6 +240,18 @@ public class PlayerScript : Singleton<PlayerScript>
         shield.SetActive(false);
     }
 
+    void EnableGather()
+    {
+        gatherMagnet.SetActive(true);
+    }
+
+    void DisableGather()
+    {
+        gatherMagnet.SetActive(false);
+    }
+
+    #endregion  
+
     IEnumerator StartCountdown()
     {
         timerUI.SetActive(true);
@@ -244,15 +272,7 @@ public class PlayerScript : Singleton<PlayerScript>
         _canRun = true;
     }
 
-    void EnableGather()
-    {
-        gatherMagnet.SetActive(true);
-    }
-
-    void DisableGather()
-    {
-        gatherMagnet.SetActive(false);
-    }
+    
 
     void StopPlayer()
     {
@@ -269,6 +289,22 @@ public class PlayerScript : Singleton<PlayerScript>
         animator.SetFloat("Speed", 0f);
 
 
+    }
+
+    void UpdateScale()
+    {
+        if (activePowerUps.Count > 0 && !isScaled)
+        {
+            isScaled = true;
+            transform.DOScale(originalScale * boostedScale, 0.2f)
+                .SetEase(Ease.OutBack);
+        }
+        else if (activePowerUps.Count == 0 && isScaled)
+        {
+            isScaled = false;
+            transform.DOScale(originalScale, 0.2f)
+                .SetEase(Ease.InOutBack);
+        }
     }
 
 }
