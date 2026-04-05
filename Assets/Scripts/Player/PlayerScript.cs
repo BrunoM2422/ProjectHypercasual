@@ -23,11 +23,9 @@ public class PlayerScript : Singleton<PlayerScript>
     public TextMeshProUGUI countdownText;
     public GameObject gatherMagnet;
     public GameObject player;
-    public float boostedScale = 1.2f;
 
 
-    private Vector3 originalScale;
-    private bool isScaled = false;
+
     private float horizontalInput;
     private bool _canRun;
     private float _currentSpeed;
@@ -58,7 +56,7 @@ public class PlayerScript : Singleton<PlayerScript>
         
         transform.localScale = Vector3.zero; 
         transform.DOScale(Vector3.one, 1f);
-        originalScale = Vector3.one;
+
 
         _canRun = false;
         ResetSpeed();
@@ -80,7 +78,7 @@ public class PlayerScript : Singleton<PlayerScript>
                 EndPowerUp(activePowerUps[i].type);
                 activePowerUps.RemoveAt(i);
 
-                UpdateScale();
+      
             }
         }
 
@@ -165,7 +163,7 @@ public class PlayerScript : Singleton<PlayerScript>
             activePowerUps.Add(new ActivePowerUp { type = type, timer = duration });
             StartPowerUp(type, value);
         }
-        UpdateScale();
+
     }
 
     #region PowerUp Logic
@@ -291,21 +289,7 @@ public class PlayerScript : Singleton<PlayerScript>
 
     }
 
-    void UpdateScale()
-    {
-        if (activePowerUps.Count > 0 && !isScaled)
-        {
-            isScaled = true;
-            transform.DOScale(originalScale * boostedScale, 0.2f)
-                .SetEase(Ease.OutBack);
-        }
-        else if (activePowerUps.Count == 0 && isScaled)
-        {
-            isScaled = false;
-            transform.DOScale(originalScale, 0.2f)
-                .SetEase(Ease.InOutBack);
-        }
-    }
+
 
 }
 

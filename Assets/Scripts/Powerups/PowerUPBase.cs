@@ -16,7 +16,7 @@ public class PowerUPBase : ItemCollectableBase
     protected override void OnCollect()
     {
         base.OnCollect();
-        player.transform.DOScale(1.2f , .1f).SetEase(Ease.OutBack);
+        player.transform.DOScale(1.2f, .2f).SetEase(Ease.OutBack).SetLoops(2, LoopType.Yoyo);
 
         StartPowerUp();
     }
